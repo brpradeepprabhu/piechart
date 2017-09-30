@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Simple SVG Pie Chart</title>
+    <script type="text/javascript">
+        var paper;
+        var arc;
+        var colorArr = ["#468966", "#FFF0A5", "#FFB03B"];
+        var pieData = [33, 33, 34];
+        var sectorAngleArr = [];
+        var total = 0;
+        var startAngle = 0;
+        var endAngle = 0;
+        var x1, x2, y1, y2 = 0;
+        var width;
+        var arcCount = 0;
+
+        function init(wi) {
+            width = wi;
+            paper = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            paper.setAttributeNS(null, 'style', "width: " + width + "px; height: " + width + "px");
+            document.getElementsByTagName("body")[0].appendChild(paper)
+
+            //CALCULATE THE TOTAL
+            for (var k = 0; k < pieData.length; k++) {
+                total += pieData[k];
+            }
+            //CALCULATE THE ANGLES THAT EACH SECTOR SWIPES AND STORE IN AN ARRAY
+            for (var i = 0; i < pieData.length; i++) {
+                var angle = Math.ceil(360 * pieData[i] / total);
+                sectorAngleArr.push(angle);
+            }
+            drawArcs(0);
+        }
+
+        function drawArcs(val) {
+            if (val < sectorAngleArr.length) {
+                startAngle = endAngle;
+                endAngle = startAngle + sectorAngleArr[val];
+                var radius = width / 2;
+                x1 = parseInt(radius + 180 * Math.cos(Math.PI * startAngle / 180));
+                y1 = parseInt(radius + 180 * Math.sin(Math.PI * startAngle / 180));
+
+                x2 = parseInt(radius + 180 * Math.cos(Math.PI * endAngle / 180));
+                y2 = parseInt(radius + 180 * Math.sin(Math.PI * endAngle / 180));
+
+                var d = "M" + radius + "," + radius + "L " + x1 + "," + y1 + "A180, 180 0 0, 1 " + x1 + ", " + y1 +
+                    "z";
+                console.log(d);
+                var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                console.log(path);
+                path.setAttribute("d", d)
+                path.setAttribute("fill", colorArr[val]);
+                path.setAttribute("stroke-width", 1);
+                path.setAttribute("stroke", '#000000');
+                // if (i == 0)
+                animate(path, x1, y1, x2, y2, 800 / sectorAngleArr.length);
+                paper.appendChild(path);
+            }
+        }
+
+        function animate(path, x1, y1, x2, y2, time) {
+            var xDiff = ((x2 - x1) / time) * 10;
+            var yDiff = ((y2 - y1) / time) * 10;
+            var updateValueX = x1;
+            var updateValueY = y1;
+            var counter = 0;
+            var radius = width / 2;
+            var timer = setInterval(function () {
+                    console.log("aaa", counter, time)
+                    if (counter <= time) {
+                        var d = "M" + radius + "," + radius + "L " + x1 + "," + y1 +
+                            "A180, 180 0 0, 1 " + updateValueX +
+                            ", " + updateValueY +
+                            "z";
+                        path.setAttribute("d", d);
+                        updateValueX += xDiff;
+                        updateValueY += yDiff;
+                        counter += 10;
+                        console.log(counter, path);
+                    } else {
+                        clearInterval(timer);
+                        var d = "M" + radius + "," + radius + "L " + x1 + "," + y1 +
+                            "A180, 180 0 0, 1 " + x2 +
+                            ", " + y2 +
+                            "z";
+                        path.setAttribute("d", d);
+                        arcCount += 1;
+                        drawArcs(arcCount);
+                    }
+                },
+                10)
+        }
+    </script>
+</head>
+
+<body onload="init(600);">
+
+</body>
+
+</html>

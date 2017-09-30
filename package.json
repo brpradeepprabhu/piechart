@@ -1,0 +1,19 @@
+{
+  "name": "piechart",
+  "version": "1.0.0",
+  "description": "piechart svg",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "lite-server"
+  },
+  "keywords": [
+    "pie",
+    "chart"
+  ],
+  "author": "brpradeepprabhu",
+  "license": "MIT",
+  "dependencies": {
+    "lite-server": "^2.3.0"
+  }
+}
